@@ -1,4 +1,4 @@
-name: C++ CI (CMake + SFML)
+name: Windows C++ CI (CMake + SFML 3.0 + C++23)
 
 on:
   push:
@@ -8,44 +8,37 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install dependencies depending on OS
-      - name: Install dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake g++ libsfml-dev
-
-      - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew update
-          brew install cmake sfml
-
       - name: Install dependencies (Windows)
-        if: matrix.os == 'windows-latest'
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
-          choco install sfml --yes
+          choco install ninja --yes
+          choco install git --yes
 
-      # Configure and build with CMake
+      # Build SFML 3.0 from source
+      - name: Build SFML 3.0
+        run: |
+          git clone --branch 3.0.x https://github.com/SFML/SFML.git
+          cmake -S SFML -B SFML/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSFML_BUILD_EXAMPLES=OFF -DSFML_BUILD_DOC=OFF
+          cmake --build SFML/build --config Release
+          cmake --install SFML/build --prefix ${{ github.workspace }}/sfml-install
+
+      # Configure and build your project
       - name: Configure CMake
-        run: cmake -S . -B build
+        run: cmake -S . -B build -G Ninja `
+          -DCMAKE_BUILD_TYPE=Release `
+          -DCMAKE_CXX_STANDARD=23 `
+          -DSFML_DIR=${{ github.workspace }}/sfml-install/lib/cmake/SFML
 
       - name: Build
         run: cmake --build build --config Release
 
-      # Optionally run tests if defined in CMake
+      # Run tests if defined
       - name: Run tests
         working-directory: build
         run: ctest --output-on-failure
