@@ -7,6 +7,7 @@ export module game;
 
 import board;
 import board_entity;
+import mouse;
 
 export class Game{
     public:
@@ -14,7 +15,8 @@ export class Game{
                     , static_cast<unsigned int>((Board::HEIGHT + 1) * Board::BLOCK_SIZE)}), "Tic Tac Toe", 
                     sf::Style::Titlebar | sf::Style::Close),
                     font("arial.ttf"),
-                    entity(Board()){
+                    entity(Board()),
+                    mouse(Mouse()){
         
             window.setFramerateLimit(60);
 
@@ -36,7 +38,9 @@ export class Game{
                 if(event->is<sf::Event::Closed>()){
                     window.close();
                 }
+                
             }
+            mouse.handle_click();
         }
 
         void update(){
@@ -53,4 +57,5 @@ export class Game{
         sf::RenderWindow window;
         sf::Font font;
         BoardEntity entity;
+        Mouse mouse;
 };
