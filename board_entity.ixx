@@ -1,15 +1,18 @@
 module;
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <vector>
 
 export module board_entity;
 
 import board;
+import mouse;
 
 
 export class BoardEntity{
     public:
-        explicit BoardEntity(const Board& board) : board_(board){}
+        explicit BoardEntity(Board& board) : board_(board){}
 
         void draw(sf::RenderWindow& window) const{
             sf::RectangleShape block(sf::Vector2f(Board::BLOCK_SIZE, Board::BLOCK_SIZE));
@@ -23,10 +26,27 @@ export class BoardEntity{
                     block.setPosition({x*Board::BLOCK_SIZE, y*Board::BLOCK_SIZE});
                     block.setFillColor(sf::Color::Blue);
                     window.draw(block);
+
+                    if(grid[y][x] == Symbol::X){
+                        sf::Sprite sprite(board_.get_texture_x());
+                        sprite.setPosition({x*Board::BLOCK_SIZE, y*Board::BLOCK_SIZE});
+                        std::vector<float> scale= board_.get_scale_x();
+                        sprite.scale({scale[0], scale[1]});
+                        window.draw(sprite);
+                    }else if(grid[y][x] == Symbol::O){
+                        sf::Sprite sprite(board_.get_texture_o());
+                        sprite.setPosition({x*Board::BLOCK_SIZE, y*Board::BLOCK_SIZE});
+                        std::vector<float> scale = board_.get_scale_o();
+                        sprite.scale({scale[0], scale[1]});
+                        window.draw(sprite);
+                    }
                 }
             }
         }
 
+
     private:
-        const Board& board_;
+        Board& board_;
+        //const Mouse& mouse_
+       
 };
