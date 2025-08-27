@@ -20,7 +20,9 @@ target_sources(${PROJECT_NAME}
         board.ixx
         board_entity.ixx
         game.ixx
+        game_state.ixx
         mouse.ixx
+        UI.ixx
 )
 
 target_link_libraries(Tic-Tac-Toe PRIVATE SFML::Graphics SFML::Window SFML::System)
