@@ -22,7 +22,7 @@ export class Board{
         static constexpr float BLOCK_SIZE = 200.0f;
         float o_scaleX , o_scaleY, x_scaleX, x_scaleY;
 
-        Board() : o_texture("assets/O.png"), x_texture("assets/X.png"){\
+        Board() : o_texture("assets/o_.png"), x_texture("assets/x_.png"){\
 
             grid.fill({Symbol::None});
             last_set_grid = {-1, -1};

@@ -2,6 +2,7 @@ module;
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 
 export module game;
 
@@ -21,7 +22,7 @@ export class Game{
                     entity(board),
                     gamestate(board),
                     mouse(window),
-                    ui(board, window){
+                    ui(board, window, font){
         
             window.setFramerateLimit(60);
 
@@ -49,6 +50,7 @@ export class Game{
                         if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
                             board.reset();
                             isGameOver = false;
+                            ui.set_stats(std::string("Let's play again!"));
                         }
                     }
                 }
@@ -77,13 +79,20 @@ export class Game{
                 isGameOver = true;
                 current_turn = Symbol::X;
                 mouse.reset_position();
-                if(winner == Symbol::Tie) std::cout<<"Its a tie\n";
-                else std::cout<<"The winner is "<<((winner == Symbol::X)?"X":"O")<<"\n";
+                if(winner == Symbol::Tie) {
+                    //std::cout<<"Its a tie\n";
+                    ui.set_stats(std::string("Its a tie"));
+                }
+                else {
+                    //std::cout<<"The winner is "<<((winner == Symbol::X)?"X":"O")<<"\n";
+
+                    ((winner == Symbol::X)?ui.set_stats(std::string("The winner is X")):ui.set_stats(std::string("The winner is O")));
+                }
             }
         }
 
         void render(){
-            window.clear(sf::Color::Black);
+            window.clear(sf::Color(1,245,255));
             entity.draw(window);
             ui.render();
             window.display();
