@@ -11,6 +11,7 @@ import board_entity;
 import mouse;
 import ui;
 import gamestate;
+import sound;
 
 export class Game{
     public:
@@ -22,9 +23,18 @@ export class Game{
                     entity(board),
                     gamestate(board),
                     mouse(window),
-                    ui(board, window, font){
+                    ui(board, window, font),
+                    sound(){
         
             window.setFramerateLimit(60);
+
+            auto image = sf::Image{};
+            if (!image.loadFromFile("assets/icon.png"))
+            {
+                std::cout<<"Cant load the icon\n";
+            }
+
+            window.setIcon(image.getSize(), image.getPixelsPtr());
 
         }
 
@@ -63,6 +73,8 @@ export class Game{
                 
                 sf::Vector2i position = mouse.get_position();
                 if(board.update_board(position, current_turn)){
+
+                    sound.play_click_sound();
                     if(current_turn ==  Symbol::X){
                         current_turn = Symbol::O;
                     }else{
@@ -71,22 +83,25 @@ export class Game{
                 }
 
                 ui.update_ui_state(position);
-            }
+            
             
 
-            winner =  gamestate.checkWinner();
-            if( winner != Symbol::None || winner == Symbol::Tie){
-                isGameOver = true;
-                current_turn = Symbol::X;
-                mouse.reset_position();
-                if(winner == Symbol::Tie) {
-                    //std::cout<<"Its a tie\n";
-                    ui.set_stats(std::string("Its a tie"));
-                }
-                else {
-                    //std::cout<<"The winner is "<<((winner == Symbol::X)?"X":"O")<<"\n";
+                winner =  gamestate.checkWinner();
+                if( winner != Symbol::None || winner == Symbol::Tie){
+                    isGameOver = true;
+                    current_turn = Symbol::X;
+                    mouse.reset_position();
 
-                    ((winner == Symbol::X)?ui.set_stats(std::string("The winner is X")):ui.set_stats(std::string("The winner is O")));
+                    if(winner == Symbol::Tie) {
+                        //std::cout<<"Its a tie\n";
+                        sound.play_tie_sound();
+                        ui.set_stats(std::string("Its a tie"));
+                    }
+                    else {
+                        //std::cout<<"The winner is "<<((winner == Symbol::X)?"X":"O")<<"\n";
+                        sound.play_victory_sound();
+                        ((winner == Symbol::X)?ui.set_stats(std::string("The winner is X")):ui.set_stats(std::string("The winner is O")));
+                    }
                 }
             }
         }
@@ -106,6 +121,7 @@ export class Game{
         GameState gamestate;
         Mouse mouse;
         UI ui;
+        Sound sound;
         Symbol current_turn = Symbol::X;
         Symbol winner = Symbol::None;
         bool isGameOver = false;

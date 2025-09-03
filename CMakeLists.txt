@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML-3.0.0/lib/cmake/SFML")
 
-find_package(SFML 3 REQUIRED COMPONENTS Graphics Window System)
+find_package(SFML 3 REQUIRED COMPONENTS Graphics Window System Audio)
 
 add_executable(Tic-Tac-Toe main.cpp)
 
@@ -23,6 +23,7 @@ target_sources(${PROJECT_NAME}
         game_state.ixx
         mouse.ixx
         UI.ixx
+        sound.ixx
 )
 
-target_link_libraries(Tic-Tac-Toe PRIVATE SFML::Graphics SFML::Window SFML::System)
+target_link_libraries(Tic-Tac-Toe PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio)
