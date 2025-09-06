@@ -5,6 +5,7 @@ module;
 #include <span>
 #include <vector>
 #include <iostream>
+#include <utility>
 
 
 
@@ -22,7 +23,7 @@ export class Board{
         static constexpr float BLOCK_SIZE = 200.0f;
         float o_scaleX , o_scaleY, x_scaleX, x_scaleY;
 
-        Board() : o_texture("assets/o_.png"), x_texture("assets/x_.png"){\
+        Board() : o_texture("assets/o.png"), x_texture("assets/x.png"){\
 
             grid.fill({Symbol::None});
             last_set_grid = {-1, -1};
@@ -67,14 +68,35 @@ export class Board{
             int y = last_set_grid[1];
 
             if(x>=0 && y>=0){
+                current_palyer = grid[x][y];
                 grid[x][y] = Symbol::None;
+                isUndo = true;
             }
         }
 
+        bool isUndoDone(){
+            return isUndo;
+        }
 
+        Symbol get_current_player(){
+            isUndo = false;
+            return current_palyer;
+        }
+
+        bool update_board_ai(Symbol player_turn, std::vector<int> move){
+            int y = move[0];
+            int x = move[1];
+
+            if(x>=0 && y>=0 && grid[y][x] == Symbol::None){
+                grid[y][x] = player_turn; 
+                return true;
+            }
+
+            return false;
+        }
         bool update_board(sf::Vector2i position, Symbol player_turn) {
 
-             for(int y=0; y < Board::HEIGHT; ++y){
+            for(int y=0; y < Board::HEIGHT; ++y){
                 for(int x=0; x < Board::WIDTH; ++x){
                     
                     int left   = x * Board::BLOCK_SIZE;
@@ -85,15 +107,16 @@ export class Board{
                     if (position.x >= left && position.x < right &&
                         position.y >= top  && position.y < bottom) {
                             
-                            if(grid[y][x] == Symbol::None){
-                                 std::cout << "reachable\n";
-                                 grid[y][x] = player_turn;
-                                 last_set_grid = {y, x};
-                                 return true;
+                            if(!isUndo && grid[y][x] == Symbol::None){
+                                std::cout << "reachable\n";
+                                grid[y][x] = player_turn;
+                                last_set_grid = {y, x};
+                                return true;
                             }
                     }
                 }
             }
+            
 
             return false;
         }
@@ -108,5 +131,8 @@ export class Board{
 
         std::vector<int> last_set_grid;
         bool wasUpdated = false;
+        bool isUndo = false;
+
+        Symbol current_palyer = Symbol::X;
 };
 

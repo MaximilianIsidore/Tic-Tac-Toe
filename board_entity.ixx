@@ -24,7 +24,7 @@ export class BoardEntity{
             for(int y=0; y < Board::HEIGHT; ++y){
                 for(int x=0; x < Board::WIDTH; ++x){
                     block.setPosition({x*Board::BLOCK_SIZE, y*Board::BLOCK_SIZE});
-                    block.setFillColor(sf::Color(152,25,203));
+                    block.setFillColor(sf::Color(44,155,243));
                     window.draw(block);
 
                     if(grid[y][x] == Symbol::X){
