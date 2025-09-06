@@ -3,6 +3,7 @@
 .vscode
 *.zip
 /bin
+*.iss
 
 # Prerequisites
 *.d

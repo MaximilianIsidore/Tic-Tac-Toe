@@ -24,6 +24,7 @@ target_sources(${PROJECT_NAME}
         mouse.ixx
         UI.ixx
         sound.ixx
+        AI.ixx
 )
 
 target_link_libraries(Tic-Tac-Toe PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio)
